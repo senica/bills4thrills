@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Post your bill · Bills 4 Thrills</title>
+<meta name="description" content="Bills 4 Thrills: swipe right to pay someone's bill. A silly demo. No real money changes hands.">
+<meta name="theme-color" content="#ff4f6e">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💸</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="post">
+<header class="site-header">
+  <div class="container">
+    <a class="logo" href="index.html" aria-label="Bills 4 Thrills home"><span class="logo-mark">💸</span><span class="logo-text">Bills <span class="four">4</span> Thrills</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="swipe.html">Swipe</a>
+      <a href="post.html" aria-current="page"><span class="nav-label-long">Post a bill</span><span class="nav-label-short">Post</span></a>
+      <a href="matches.html"><span class="nav-label-long">My matches</span><span class="nav-label-short">Matches</span></a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="page-head" id="post-head">
+    <div class="container">
+      <h1>Post your bill</h1>
+      <p>Tell your story, name the bill, and let the right swipes roll in.</p>
+    </div>
+  </div>
+  <div class="form-wrap">
+    <div class="demo-banner" role="note">
+      <span aria-hidden="true">⚠️</span>
+      <div><strong>This is a demo.</strong> No money moves, nothing leaves your browser. Your post is saved only on this device (localStorage) and shows up in your own swipe deck.</div>
+    </div>
+
+    <form id="post-form" novalidate>
+      <div class="field">
+        <span class="label">Your photo <span class="help">(optional)</span></span>
+        <div class="photo-picker">
+          <div class="photo-preview" id="photo-preview">?</div>
+          <div class="photo-inputs">
+            <label class="file-btn"><input type="file" id="photo-file" accept="image/*"><span id="file-label">Upload a photo</span></label>
+            <input type="url" id="photo-url" placeholder="or paste an image URL" aria-label="Photo URL">
+          </div>
+        </div>
+      </div>
+
+      <div class="row row-2-1">
+        <div class="field">
+          <label for="name">First name</label>
+          <input type="text" id="name" maxlength="30" autocomplete="given-name" placeholder="Jessica">
+          <div class="error">What should donors call you?</div>
+        </div>
+        <div class="field">
+          <label for="age">Age</label>
+          <input type="number" id="age" min="18" max="120" inputmode="numeric" placeholder="29">
+          <div class="error">18+ only</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="tagline">One-liner <span class="help">(optional)</span></label>
+        <input type="text" id="tagline" maxlength="60" placeholder="Single mom · Professional juggler">
+      </div>
+
+      <div class="field">
+        <label for="story">Your story</label>
+        <textarea id="story" maxlength="280" placeholder="Keep it short and real. What's going on, and why would this help?"></textarea>
+        <div class="char-count" id="story-count">0 / 280</div>
+        <div class="error">Give us at least a sentence or two.</div>
+      </div>
+
+      <div class="field">
+        <span class="label">Bill type</span>
+        <div class="chips">
+          <input type="radio" name="billType" id="bt-0" value="Electric" checked><label for="bt-0">⚡ Electric</label>
+          <input type="radio" name="billType" id="bt-1" value="Water"><label for="bt-1">💧 Water</label>
+          <input type="radio" name="billType" id="bt-2" value="Gas"><label for="bt-2">🔥 Gas</label>
+          <input type="radio" name="billType" id="bt-3" value="Rent"><label for="bt-3">🏠 Rent</label>
+          <input type="radio" name="billType" id="bt-4" value="Phone"><label for="bt-4">📱 Phone</label>
+          <input type="radio" name="billType" id="bt-5" value="Internet"><label for="bt-5">📶 Internet</label>
+          <input type="radio" name="billType" id="bt-6" value="Groceries"><label for="bt-6">🛒 Groceries</label>
+          <input type="radio" name="billType" id="bt-7" value="Medical"><label for="bt-7">🩺 Medical</label>
+          <input type="radio" name="billType" id="bt-8" value="Tuition"><label for="bt-8">🎓 Tuition</label>
+          <input type="radio" name="billType" id="bt-9" value="Textbooks"><label for="bt-9">📚 Textbooks</label>
+          <input type="radio" name="billType" id="bt-10" value="Car repair"><label for="bt-10">🚗 Car repair</label>
+          <input type="radio" name="billType" id="bt-11" value="Other"><label for="bt-11">🧾 Other</label>
+        </div>
+      </div>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="amount">Amount</label>
+          <div class="money"><span>$</span><input type="number" id="amount" min="1" step="0.01" inputmode="decimal" placeholder="142"></div>
+          <div class="error">Enter an amount</div>
+        </div>
+        <div class="field">
+          <label for="due">Due date</label>
+          <input type="date" id="due">
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" type="submit">Post my bill</button>
+      <p class="fineprint">By posting you agree that this is pretend and nobody is actually paying anything.</p>
+    </form>
+
+    <div class="success" id="success" hidden>
+      <div class="big-emoji">🎉</div>
+      <h2>You're in the deck, <span id="success-name"></span>!</h2>
+      <p>Your <strong id="success-bill"></strong> is now live in the swipe stack. Go see yourself in action.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="swipe.html">See it in the deck <span aria-hidden="true">→</span></a>
+        <button class="btn btn-ghost" type="button" id="post-another">Post another</button>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="container"><strong>Demo only.</strong> No real money changes hands. All profiles are fictional. &copy; <span id="year">2026</span> Bills 4 Thrills</div>
+</footer>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

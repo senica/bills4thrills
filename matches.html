@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My matches · Bills 4 Thrills</title>
+<meta name="description" content="Bills 4 Thrills: swipe right to pay someone's bill. A silly demo. No real money changes hands.">
+<meta name="theme-color" content="#ff4f6e">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💸</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="matches">
+<header class="site-header">
+  <div class="container">
+    <a class="logo" href="index.html" aria-label="Bills 4 Thrills home"><span class="logo-mark">💸</span><span class="logo-text">Bills <span class="four">4</span> Thrills</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="swipe.html">Swipe</a>
+      <a href="post.html"><span class="nav-label-long">Post a bill</span><span class="nav-label-short">Post</span></a>
+      <a href="matches.html" aria-current="page"><span class="nav-label-long">My matches</span><span class="nav-label-short">Matches</span></a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="page-head">
+    <div class="container">
+      <h1>My matches</h1>
+      <p>Every bill you've swiped right on. Look at you go.</p>
+    </div>
+  </div>
+  <div class="matches-wrap">
+    <div class="summary">
+      <div><strong id="sum-total">$0</strong><span>total paid</span></div>
+      <div><strong id="sum-count">0</strong><span>bills crushed</span></div>
+    </div>
+    <ul class="match-list" id="match-list"></ul>
+    <div class="empty-matches" id="matches-empty" hidden>
+      <div class="big-emoji">💔</div>
+      <h2>No matches yet</h2>
+      <p>Your thumb is rested and ready. Go make someone's month.</p>
+      <a class="btn btn-primary" href="swipe.html">Start swiping <span aria-hidden="true">→</span></a>
+    </div>
+    <button class="text-btn" id="btn-clear" type="button">Reset my matches</button>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="container"><strong>Demo only.</strong> No real money changes hands. All profiles are fictional. &copy; <span id="year">2026</span> Bills 4 Thrills</div>
+</footer>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

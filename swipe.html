@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Swipe · Bills 4 Thrills</title>
+<meta name="description" content="Bills 4 Thrills: swipe right to pay someone's bill. A silly demo. No real money changes hands.">
+<meta name="theme-color" content="#ff4f6e">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💸</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="swipe">
+<header class="site-header">
+  <div class="container">
+    <a class="logo" href="index.html" aria-label="Bills 4 Thrills home"><span class="logo-mark">💸</span><span class="logo-text">Bills <span class="four">4</span> Thrills</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="swipe.html" aria-current="page">Swipe</a>
+      <a href="post.html"><span class="nav-label-long">Post a bill</span><span class="nav-label-short">Post</span></a>
+      <a href="matches.html"><span class="nav-label-long">My matches</span><span class="nav-label-short">Matches</span></a>
+    </nav>
+  </div>
+</header>
+<main class="swipe-page">
+  <div class="swipe-wrap">
+    <div class="tally" aria-live="polite">
+      <div>You've paid <strong id="tally-amount">$0</strong> in bills</div>
+      <a href="matches.html">Matches →</a>
+    </div>
+
+    <div class="deck" id="deck" aria-live="polite"></div>
+
+    <div class="actions">
+      <button class="round-btn pass" id="btn-pass" aria-label="Pass">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <button class="round-btn pay" id="btn-pay" aria-label="Pay this bill">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.8 4.5c2.1 0 3.6 1.1 5.2 3 1.6-1.9 3.1-3 5.2-3 3.9 0 5.9 4.1 4.4 7.4C19.5 16.4 12 21 12 21z"/></svg>
+      </button>
+    </div>
+    <p class="hint">Drag the card, tap a button, or use <kbd>←</kbd> <kbd>→</kbd></p>
+  </div>
+</main>
+
+<div class="modal" id="match-modal" role="dialog" aria-modal="true" aria-labelledby="match-title" hidden>
+  <div class="modal-card">
+    <h2 class="match-title" id="match-title">It's a Match!</h2>
+    <div class="match-avatars">
+      <div class="av" aria-hidden="true">💸</div>
+      <div class="heart" aria-hidden="true">❤</div>
+      <div id="match-avatar"></div>
+    </div>
+    <p class="match-text" id="match-text"></p>
+    <p class="match-sub" id="match-sub"></p>
+    <div class="modal-actions">
+      <button class="btn btn-primary btn-block" id="btn-keep">Keep swiping</button>
+      <a class="btn btn-ghost btn-block" href="matches.html">See my matches</a>
+    </div>
+    <span class="demo-tag">Demo: no real money moved</span>
+  </div>
+</div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<footer class="site-footer">
+  <div class="container"><strong>Demo only.</strong> No real money changes hands. All profiles are fictional. &copy; <span id="year">2026</span> Bills 4 Thrills</div>
+</footer>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
