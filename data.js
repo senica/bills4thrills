@@ -97,3 +97,27 @@ window.B4T_PROFILES = [
     due: "2026-11-06"
   }
 ];
+
+/* Leaderboard — fictional donors. All-time and "this week" totals are made up. */
+window.B4T_TIERS = [
+  { min: 25000, label: "Bill Baron", emoji: "🏆" },
+  { min: 10000, label: "Utility Tycoon", emoji: "💎" },
+  { min: 5000, label: "Rent Rescuer", emoji: "🔥" },
+  { min: 1000, label: "Power Patron", emoji: "⚡" },
+  { min: 250, label: "Drip Donor", emoji: "💧" },
+  { min: 1, label: "Penny Philanthropist", emoji: "🪙" },
+  { min: 0, label: "Fresh Thumb", emoji: "👍" }
+];
+
+window.B4T_DONORS = [
+  { handle: "YachtDaddy42", emoji: "🛥️", allTime: { total: 48250, bills: 212 }, week: { total: 2410, bills: 11 } },
+  { handle: "Trust Fund Tina", emoji: "👛", allTime: { total: 31780, bills: 164 }, week: { total: 1980, bills: 9 } },
+  { handle: "CryptoChad", emoji: "🚀", allTime: { total: 22400, bills: 97 }, week: { total: 2950, bills: 14 } },
+  { handle: "Sir Spends-a-Lot", emoji: "🎩", allTime: { total: 14920, bills: 71 }, week: { total: 640, bills: 4 } },
+  { handle: "Old Money Margaret", emoji: "🦢", allTime: { total: 9875, bills: 58 }, week: { total: 1120, bills: 6 } },
+  { handle: "HedgeFund Hank", emoji: "📈", allTime: { total: 6300, bills: 30 }, week: { total: 310, bills: 2 } },
+  { handle: "Brunch Barbara", emoji: "🥂", allTime: { total: 3450, bills: 27 }, week: { total: 480, bills: 5 } },
+  { handle: "Venture Vince", emoji: "🦄", allTime: { total: 1890, bills: 12 }, week: { total: 95, bills: 1 } },
+  { handle: "Influencer Ivy", emoji: "🤳", allTime: { total: 960, bills: 9 }, week: { total: 220, bills: 2 } },
+  { handle: "DentistDave", emoji: "🦷", allTime: { total: 410, bills: 3 }, week: { total: 140, bills: 1 } }
+];

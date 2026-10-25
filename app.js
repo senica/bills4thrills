@@ -449,11 +449,111 @@
     });
   }
 
+  // ---------- Leaderboard (homepage) ----------
+  function tierFor(amount) {
+    var tiers = window.B4T_TIERS || [];
+    for (var i = 0; i < tiers.length; i++) if (amount >= tiers[i].min) return tiers[i];
+    return tiers[tiers.length - 1] || { label: "", emoji: "" };
+  }
+
+  function myStats(period) {
+    var paid = Store.paid();
+    if (period === "week") {
+      var cutoff = Date.now() - 7 * 864e5;
+      paid = paid.filter(function (p) { return new Date(p.paidAt).getTime() >= cutoff; });
+    }
+    return {
+      total: paid.reduce(function (s, p) { return s + Number(p.amount || 0); }, 0),
+      bills: paid.length
+    };
+  }
+
+  function initLeaderboard() {
+    var podium = $("#lb-podium"), list = $("#lb-list"), nudge = $("#lb-nudge-text");
+    if (!podium) return;
+    var tabs = document.querySelectorAll(".lb-tab");
+    var MEDALS = ["🥇", "🥈", "🥉"];
+
+    function avatar(r, cls) {
+      return '<span class="' + cls + '"' + (r.isYou ? "" : ' style="background:' + gradientFor(r.handle) + '"') + ">" +
+        (r.isYou ? "You" : esc(r.emoji)) + "</span>";
+    }
+    function tierPill(r) {
+      var t = tierFor(r.total);
+      return '<span class="tier">' + t.emoji + " " + esc(t.label) + "</span>";
+    }
+    function billsLabel(n) { return n + (n === 1 ? " bill" : " bills"); }
+
+    function render(period) {
+      var me = myStats(period);
+      var rows = (window.B4T_DONORS || []).map(function (d) {
+        return { handle: d.handle, emoji: d.emoji, total: d[period].total, bills: d[period].bills };
+      });
+      var you = { handle: "You", isYou: true, total: me.total, bills: me.bills };
+      rows.sort(function (a, b) { return b.total - a.total; });
+      // You rank above anyone you've tied or beaten; at $0 you're at the very bottom.
+      var idx = rows.length;
+      if (you.total > 0) {
+        for (var i = 0; i < rows.length; i++) if (you.total >= rows[i].total) { idx = i; break; }
+      }
+      rows.splice(idx, 0, you);
+      rows.forEach(function (r, i) { r.rank = i + 1; });
+
+      // Podium: visual order 2, 1, 3
+      var top = rows.slice(0, 3);
+      podium.innerHTML = [1, 0, 2].map(function (i) {
+        var r = top[i]; if (!r) return "";
+        return '<div class="podium-spot place-' + (i + 1) + (r.isYou ? " is-you" : "") + '">' +
+          '<div class="podium-person">' +
+            '<div class="podium-avatar">' + avatar(r, "lb-av lb-av-lg") + '<span class="medal" aria-hidden="true">' + MEDALS[i] + "</span></div>" +
+            '<div class="podium-name">' + esc(r.handle) + "</div>" +
+            '<div class="podium-amt">' + money(r.total) + "</div>" +
+            tierPill(r) +
+          "</div>" +
+          '<div class="podium-step"><span>' + (i + 1) + "</span></div>" +
+        "</div>";
+      }).join("");
+
+      list.innerHTML = rows.slice(3).map(function (r) {
+        return '<li class="lb-row' + (r.isYou ? " is-you" : "") + '">' +
+          '<span class="lb-rank">' + r.rank + "</span>" +
+          avatar(r, "lb-av") +
+          '<div class="lb-who"><div class="lb-name">' + esc(r.handle) + (r.isYou ? ' <span class="you-pill">That\'s you!</span>' : "") + "</div>" + tierPill(r) + "</div>" +
+          '<div class="lb-stats"><div class="lb-amt">' + money(r.total) + '</div><div class="lb-bills">' + billsLabel(r.bills) + "</div></div>" +
+        "</li>";
+      }).join("");
+
+      // Nudge
+      var ahead = rows[you.rank - 2];
+      var when = period === "week" ? " this week" : "";
+      var msg;
+      if (you.total <= 0) {
+        msg = "You're <strong>#" + you.rank + "</strong> with <strong>$0</strong>" + when + " so far. Everybody starts at the bottom, legends included. Pay <strong>" +
+          money(ahead.total - you.total + 1) + "</strong> to pass " + esc(ahead.handle) + " and get on the board.";
+      } else if (!ahead) {
+        msg = "You're <strong>#1</strong>" + when + "! 👑 " + esc(rows[1].handle) + " is shaking in their boat shoes. Keep it that way.";
+      } else {
+        msg = "You're <strong>#" + you.rank + "</strong>" + when + "! Pay <strong>" + money(ahead.total - you.total + 1) +
+          "</strong> more to pass " + esc(ahead.handle) + ".";
+      }
+      nudge.innerHTML = msg;
+    }
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        tabs.forEach(function (t) { t.setAttribute("aria-selected", t === tab ? "true" : "false"); });
+        render(tab.dataset.period);
+      });
+    });
+    render("allTime");
+  }
+
   // ---------- Boot ----------
   document.addEventListener("DOMContentLoaded", function () {
     var page = document.body.dataset.page;
     var y = $("#year"); if (y) y.textContent = new Date().getFullYear();
     var t = $("#hero-total"); if (t) t.textContent = money(Store.totalPaid());
+    if (page === "home") initLeaderboard();
     if (page === "swipe") initSwipe();
     if (page === "post") initPost();
     if (page === "matches") initMatches();
