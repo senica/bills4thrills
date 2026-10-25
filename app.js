@@ -16,12 +16,20 @@
     catch (e) { console.warn("Storage full or unavailable", e); return false; }
   }
 
+  function asArray(v) { return Array.isArray(v) ? v : []; }
+  function num(v) { var n = Number(v); return isFinite(n) && n > 0 ? n : 0; }
+
   var Store = {
-    paid: function () { return read(KEYS.paid, []); },
-    seen: function () { return read(KEYS.seen, []); },
-    posted: function () { return read(KEYS.posted, []); },
+    // Always hand back clean arrays, even if storage holds an older or corrupted shape.
+    paid: function () {
+      return asArray(read(KEYS.paid, [])).filter(function (p) { return p && typeof p === "object"; });
+    },
+    seen: function () { return asArray(read(KEYS.seen, [])); },
+    posted: function () {
+      return asArray(read(KEYS.posted, [])).filter(function (p) { return p && typeof p === "object" && p.id; });
+    },
     totalPaid: function () {
-      return Store.paid().reduce(function (s, p) { return s + Number(p.amount || 0); }, 0);
+      return Store.paid().reduce(function (s, p) { return s + num(p.amount); }, 0);
     },
     markSeen: function (id) {
       var s = Store.seen(); if (s.indexOf(id) === -1) s.push(id); write(KEYS.seen, s);
@@ -450,8 +458,23 @@
   }
 
   // ---------- Leaderboard (homepage) ----------
+  // Fallbacks so the board never renders blank if data.js is stale or missing fields.
+  var FALLBACK_TIERS = [
+    { min: 25000, label: "Bill Baron", emoji: "🏆" }, { min: 10000, label: "Utility Tycoon", emoji: "💎" },
+    { min: 5000, label: "Rent Rescuer", emoji: "🔥" }, { min: 1000, label: "Power Patron", emoji: "⚡" },
+    { min: 250, label: "Drip Donor", emoji: "💧" }, { min: 1, label: "Penny Philanthropist", emoji: "🪙" },
+    { min: 0, label: "Fresh Thumb", emoji: "👍" }
+  ];
+  var FALLBACK_DONORS = [
+    { handle: "YachtDaddy42", emoji: "🛥️", allTime: { total: 48250, bills: 212 }, week: { total: 2410, bills: 11 } },
+    { handle: "Trust Fund Tina", emoji: "👛", allTime: { total: 31780, bills: 164 }, week: { total: 1980, bills: 9 } },
+    { handle: "CryptoChad", emoji: "🚀", allTime: { total: 22400, bills: 97 }, week: { total: 2950, bills: 14 } },
+    { handle: "Sir Spends-a-Lot", emoji: "🎩", allTime: { total: 14920, bills: 71 }, week: { total: 640, bills: 4 } },
+    { handle: "DentistDave", emoji: "🦷", allTime: { total: 410, bills: 3 }, week: { total: 140, bills: 1 } }
+  ];
+
   function tierFor(amount) {
-    var tiers = window.B4T_TIERS || [];
+    var tiers = Array.isArray(window.B4T_TIERS) && window.B4T_TIERS.length ? window.B4T_TIERS : FALLBACK_TIERS;
     for (var i = 0; i < tiers.length; i++) if (amount >= tiers[i].min) return tiers[i];
     return tiers[tiers.length - 1] || { label: "", emoji: "" };
   }
@@ -460,10 +483,13 @@
     var paid = Store.paid();
     if (period === "week") {
       var cutoff = Date.now() - 7 * 864e5;
-      paid = paid.filter(function (p) { return new Date(p.paidAt).getTime() >= cutoff; });
+      paid = paid.filter(function (p) {
+        var t = new Date(p.paidAt).getTime();
+        return isFinite(t) && t >= cutoff;
+      });
     }
     return {
-      total: paid.reduce(function (s, p) { return s + Number(p.amount || 0); }, 0),
+      total: paid.reduce(function (s, p) { return s + num(p.amount); }, 0),
       bills: paid.length
     };
   }
@@ -486,8 +512,10 @@
 
     function render(period) {
       var me = myStats(period);
-      var rows = (window.B4T_DONORS || []).map(function (d) {
-        return { handle: d.handle, emoji: d.emoji, total: d[period].total, bills: d[period].bills };
+      var donors = Array.isArray(window.B4T_DONORS) && window.B4T_DONORS.length ? window.B4T_DONORS : FALLBACK_DONORS;
+      var rows = donors.filter(function (d) { return d && d.handle; }).map(function (d) {
+        var stats = d[period] || d.allTime || {};
+        return { handle: String(d.handle), emoji: d.emoji || "💰", total: num(stats.total), bills: Math.round(num(stats.bills)) };
       });
       var you = { handle: "You", isYou: true, total: me.total, bills: me.bills };
       rows.sort(function (a, b) { return b.total - a.total; });
@@ -527,7 +555,9 @@
       var ahead = rows[you.rank - 2];
       var when = period === "week" ? " this week" : "";
       var msg;
-      if (you.total <= 0) {
+      if (!rows[1]) {
+        msg = "You're on the board! Go pay a bill.";
+      } else if (you.total <= 0) {
         msg = "You're <strong>#" + you.rank + "</strong> with <strong>$0</strong>" + when + " so far. Everybody starts at the bottom, legends included. Pay <strong>" +
           money(ahead.total - you.total + 1) + "</strong> to pass " + esc(ahead.handle) + " and get on the board.";
       } else if (!ahead) {
@@ -542,10 +572,17 @@
     tabs.forEach(function (tab) {
       tab.addEventListener("click", function () {
         tabs.forEach(function (t) { t.setAttribute("aria-selected", t === tab ? "true" : "false"); });
-        render(tab.dataset.period);
+        safeRender(tab.dataset.period);
       });
     });
-    render("allTime");
+    function safeRender(period) {
+      try { render(period); }
+      catch (err) {
+        console.warn("Leaderboard render failed", err);
+        nudge.innerHTML = "The leaderboard tripped over its own wallet. Refresh to try again.";
+      }
+    }
+    safeRender("allTime");
   }
 
   // ---------- Boot ----------
